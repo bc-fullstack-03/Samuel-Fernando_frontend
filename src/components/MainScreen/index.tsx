@@ -8,7 +8,7 @@ interface MainScreenProps {
 
 function MainScreen({ children }: MainScreenProps) {
   return (
-    <div className='w-screen h-screen flex'>
+    <div className='w-screen h-full flex'>
       <Menu />
       {children}
     </div>

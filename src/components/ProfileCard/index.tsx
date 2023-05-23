@@ -15,7 +15,7 @@ function ProfileCard() {
   }
 
   return (
-    <div className='basis-5/6'>
+    <div>
       <Heading className='border-b border-slate-400 mt-4'>
         <Text className='font-extrabold ml-4' size='xlg'>Perfil</Text>
         <div className='flex items-center pl-5 py-4'>
