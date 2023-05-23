@@ -17,7 +17,7 @@ function Home() {
       try {
         const { data } = await api.get(`/feed?page=${page}`, getAuthHeader());
         setHasMore(data.pageableResponse.hasNext);
-        setPosts((posts) => [...posts, ...data.postResponse]);
+        setPosts([...posts, ...data.postResponse]);
       } catch (err) {
         toast.error('Ocorreu um erro ao obter o feed');
       }
