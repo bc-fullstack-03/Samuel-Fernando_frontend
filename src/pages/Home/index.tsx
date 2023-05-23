@@ -30,8 +30,12 @@ function Home() {
     setPage(page + 1);
   };
 
+  function postCreated(post: Post) {
+    setPosts([post, ...posts]);
+  }
+
   return (
-    <MainScreen>
+    <MainScreen postCreated={postCreated}>
       <Feed
         posts={posts}
         loadMorePosts={loadMorePosts}

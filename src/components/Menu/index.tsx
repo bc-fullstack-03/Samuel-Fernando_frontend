@@ -1,11 +1,26 @@
 import { House, User, UsersThree } from '@phosphor-icons/react';
+import * as Dialog from '@radix-ui/react-dialog';
 
 import menuLogo from '../../assets/menuLogo.svg';
 import Text from '../Text';
 import MenuItem from '../MenuItem';
-import Button from '../Button';
+import CreatePostButton from '../CreatePostButton';
+import CreatePostDialog from '../CreatePostDialog';
+import { Post } from '../../models/Post';
+import { useState } from 'react';
 
-function Menu() {
+interface MenuProps {
+  postCreated: (post: Post) => void;
+}
+
+function Menu(props: MenuProps) {
+  const [open, setOpen] = useState(false);
+
+  function postCreated(post: Post) {
+    setOpen(false);
+    props.postCreated(post);
+  }
+
   return (
     <div className='basis-1/6 border-r border-slate-400 ml-4 pt-4'>
       <div className='flex items-center ml-4'>
@@ -32,9 +47,14 @@ function Menu() {
           <UsersThree size={40} weight='fill' className='text-slate-50' />
         </MenuItem>
       </ul>
-      <div className='ml-2 pr-2 mt-5 mr-4'>
-        <Button>Novo Post</Button>
-      </div>
+      <footer>
+        <div className='ml-2 pr-2 mt-5 mr-4'>
+          <Dialog.Root open={open} onOpenChange={setOpen}>
+            <CreatePostButton />
+            <CreatePostDialog postCreated={postCreated} />
+          </Dialog.Root>
+        </div>
+      </footer>
     </div>
   );
 }
