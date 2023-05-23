@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 
 import AuthForm, { Auth } from '../../components/AuthForm';
 import api from '../../services/api';
+import { getAuthHeader } from '../../services/auth';
 
 interface UserToken {
   sub: string;
@@ -18,6 +19,10 @@ function Login() {
       const decodedToken = jwtDecode(data.token) as UserToken;
       localStorage.setItem('user', decodedToken.sub);
       localStorage.setItem('accessToken', data.token);
+
+      const response = await api.get(`/profile/${decodedToken.sub}`, getAuthHeader());
+      localStorage.setItem('userProfile', JSON.stringify(response.data));
+
       toast.info('Seja bem vindo!');
       navigate('/home');
     } catch (err) {
