@@ -35,7 +35,7 @@ function FriendsList() {
       </Heading>
       {profiles && profiles.map((profile) => {
         return profile.idUser != userProfile.idUser && (
-          <FriendCard profile={profile} />
+          <FriendCard profile={profile} key={profile.idUser} />
         );
       })}
     </div>
