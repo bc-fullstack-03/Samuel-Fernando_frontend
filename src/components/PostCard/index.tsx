@@ -54,9 +54,13 @@ function PostCard({ post }: PostCardProps) {
       </Heading>
       <div className='ml-16 flex flex-col gap-2 mb-5'>
         <Heading size='sm'>{post.title}</Heading>
-        <Text asChild>
-          <p>{post.description}</p>
-        </Text>
+        {post.isImage ? (
+          <img src={post.description} className='max-w-lg rounded-lg' />
+        ) : (
+          <Text asChild>
+            <p>{post.description}</p>
+          </Text>
+        )}
       </div>
       <footer className='flex items-center ml-16 my-4 space-x-3'>
         {liked ?
