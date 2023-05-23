@@ -10,7 +10,7 @@ import { Post } from '../../models/Post';
 import { useState } from 'react';
 
 interface MenuProps {
-  postCreated: (post: Post) => void;
+  postCreated: (post: Post) => void | null;
 }
 
 function Menu(props: MenuProps) {
