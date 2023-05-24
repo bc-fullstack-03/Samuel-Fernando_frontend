@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { UserCircle, Chat, Heart } from '@phosphor-icons/react';
 import { toast } from 'react-toastify';
 
@@ -26,7 +27,7 @@ function PostCard({ post }: PostCardProps) {
 
   const handlePostLike = async (postId: string) => {
     try {
-      if(!liked){
+      if (!liked) {
         await api.post(`/post/${postId}/like`, null, getAuthHeader());
 
         setLiked(true);
@@ -52,23 +53,27 @@ function PostCard({ post }: PostCardProps) {
         }
         <Text size='lg' className='ml-2 font-bold'>{post.userProfile.name}</Text>
       </Heading>
-      <div className='ml-16 flex flex-col gap-2 mb-5'>
-        <Heading size='sm'>{post.title}</Heading>
-        {post.isImage ? (
-          <img src={post.description} className='max-w-lg rounded-lg' />
-        ) : (
-          <Text asChild>
-            <p>{post.description}</p>
-          </Text>
-        )}
-      </div>
+      <Link to={`/post/${post.id}`} className='cursor-pointer'>
+        <div className='ml-16 flex flex-col gap-2 mb-5'>
+          <Heading size='sm'>{post.title}</Heading>
+          {post.isImage ? (
+            <img src={post.description} className='max-w-lg rounded-lg' />
+          ) : (
+            <Text asChild>
+              <p>{post.description}</p>
+            </Text>
+          )}
+        </div>
+      </Link>
       <footer className='flex items-center ml-16 my-4 space-x-3'>
         {liked ?
           <Heart size={24} className='cursor-pointer' weight='fill' color='#81D8F7' onClick={() => handlePostLike(post.id)} />
-          : <Heart size={24} className='cursor-pointer text-slate-50 hover:text-[#81D8F7]'  onClick={() => handlePostLike(post.id)} />
+          : <Heart size={24} className='cursor-pointer text-slate-50 hover:text-[#81D8F7]' onClick={() => handlePostLike(post.id)} />
         }
         <Text>{likesCount}</Text>
-        <Chat size={24} className='cursor-pointer text-slate-50 hover:text-[#81D8F7]' />
+        <Link to={`/post/${post.id}`}>
+          <Chat size={24} className='cursor-pointer text-slate-50 hover:text-[#81D8F7]' />
+        </Link>
         <Text>{post.comments.length}</Text>
       </footer>
     </div>
