@@ -1,0 +1,47 @@
+version: '3'
+services:
+  parrot-mongo:
+    image: mongo:latest
+    container_name: parrot_mongo
+    restart: always
+    ports:
+      - 27017:27017
+    networks:
+      - parrot-network
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack-parrot
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+      - "8055:8080"
+    environment:
+      - SERVICES=s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - ./tmp/localstack:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - parrot-network
+
+  backend:
+    image: samuelfst/sysmap-parrot-backend:latest
+    # build: .
+    container_name: sysmap_parrot_backend
+    depends_on:
+      - parrot-mongo
+      - localstack
+    ports:
+      - 8082:8082
+    environment:
+      - MONGODB_HOST=parrot-mongo
+      - AWS_S3_URL=http://localstack-parrot:4566
+      - API_ENV=container
+    networks:
+      - parrot-network
+
+networks:
+  parrot-network:
+    driver: bridge
