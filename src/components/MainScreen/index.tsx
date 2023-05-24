@@ -10,7 +10,7 @@ interface MainScreenProps {
 
 function MainScreen({ children, postCreated }: MainScreenProps) {
   return (
-    <div className='w-screen h-full flex'>
+    <div className='w-screen min-h-screen flex'>
       <Menu postCreated={postCreated ? postCreated : () => null} />
       {children}
     </div>
