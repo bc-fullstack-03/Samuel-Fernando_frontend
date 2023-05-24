@@ -5,6 +5,7 @@ import Register from '../pages/Register';
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import Friends from '../pages/Friends';
+import PostDetail from '../pages/PostDetail';
 
 const routes = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const routes = createBrowserRouter([
   {
     path: '/friends',
     element: <Friends />,
+  },
+  {
+    path: '/post/:postId',
+    element: <PostDetail />,
   },
 ]);
 
