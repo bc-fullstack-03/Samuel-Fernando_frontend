@@ -1,4 +1,4 @@
-import { FormEvent, ReactNode } from 'react';
+import { FormEvent, ReactNode, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Envelope, Lock } from '@phosphor-icons/react';
 
@@ -35,6 +35,10 @@ interface AuthFormElement extends HTMLFormElement {
 }
 
 function AuthForm(props: AuthFormProps) {
+  const [hasErrors, setHasErrors] = useState(false);
+  const [errorEmail, setErrorEmail] = useState('');
+  const [errorPassword, setErrorPassword] = useState('');
+
   function handleSubmit(event: FormEvent<AuthFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -45,6 +49,20 @@ function AuthForm(props: AuthFormProps) {
       email: form.elements.email.value,
       password: form.elements.password.value,
     };
+
+    if (auth.email.length < 3) {
+      setHasErrors(true);
+      setErrorEmail('O email precisa ter ao menos 3 caracteres');
+    }
+
+    if (auth.password.length < 3) {
+      setHasErrors(true);
+      setErrorPassword('A senha precisa ter ao menos 3 caracteres');
+    }
+
+    if (hasErrors) {
+      return;
+    }
 
     props.submitAction(auth);
   }
@@ -71,8 +89,10 @@ function AuthForm(props: AuthFormProps) {
               type='email'
               placeholder='Digite seu e-mail'
               id='email'
+              onChange={() => setHasErrors(false)}
             />
           </TextInput.Root>
+          {errorEmail && <Text className='text-red-600' size='sm'>{errorEmail}</Text>}
           <Text>Senha</Text>
           <TextInput.Root>
             <TextInput.Icon>
@@ -82,8 +102,10 @@ function AuthForm(props: AuthFormProps) {
               type='password'
               placeholder='Digite sua senha'
               id='password'
+              onChange={() => setHasErrors(false)}
             />
           </TextInput.Root>
+          {errorPassword && <Text className='text-red-600' size='sm'>{errorPassword}</Text>}
           <Button type='submit' className='mt-7'>{props.submitButtonText}</Button>
         </form>
         <footer className='flex flex-col items-center gap-4 mt-6'>

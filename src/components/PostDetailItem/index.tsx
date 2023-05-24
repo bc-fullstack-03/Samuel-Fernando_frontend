@@ -1,4 +1,4 @@
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { UserCircle } from '@phosphor-icons/react';
 import { toast } from 'react-toastify';
 
@@ -25,6 +25,8 @@ interface CommentFormElement extends HTMLFormElement {
 }
 
 function PostDetailItem({ post, setPostDetail }: PostDetailItemProps) {
+  const [errorComment, setErrorComment] = useState('');
+
   async function handleCommentSubmit(event: FormEvent<CommentFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -33,10 +35,16 @@ function PostDetailItem({ post, setPostDetail }: PostDetailItemProps) {
       description: form.elements.description.value,
     };
 
+    if (data.description.length < 3) {
+      setErrorComment('O comentário precisa ter ao menos 3 caracteres');
+      return;
+    }
+
     try {
       await api.post(`/post/${post.id}/comments`, data, getAuthHeader());
       const response = await api.get(`/post/${post.id}`, getAuthHeader());
       setPostDetail(response.data);
+      setErrorComment('');
       form.elements.description.value = '';
     } catch (err) {
       toast.error('Ocorreu um erro ao comentar');
@@ -54,7 +62,10 @@ function PostDetailItem({ post, setPostDetail }: PostDetailItemProps) {
             placeholder='Digite seu comentário'
           />
         </TextInput.Root>
-        <Button type='submit' className='max-w-xs mt-4'>Comentar</Button>
+        <div className='flex flex-col'>
+          {errorComment && <Text className='text-red-600 mt-2' size='sm'>{errorComment}</Text>}
+          <Button type='submit' className='max-w-xs mt-4'>Comentar</Button>
+        </div>
       </form>
       <section className='border-t border-slate-400 w-full pt-5 mt-8'>
         <Text size='lg' className='mx-5 mb-4 font-extrabold'>Comentários:</Text>

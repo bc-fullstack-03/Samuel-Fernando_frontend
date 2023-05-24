@@ -25,6 +25,9 @@ interface CreatePostDialogProps {
 
 function CreatePostDialog({ postCreated }: CreatePostDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [hasErrors, setHasErrors] = useState(false);
+  const [errorTitle, setErrorTitle] = useState('');
+  const [errorDescription, setErrorDescription] = useState('');
 
   async function handleSubmit(event: FormEvent<PostFormElement>) {
     event.preventDefault();
@@ -35,6 +38,20 @@ function CreatePostDialog({ postCreated }: CreatePostDialogProps) {
       'description': selectedFile ? '' : form.elements.description.value,
       'isImage': selectedFile ? true : false,
     };
+
+    if (newPost.title.length < 3) {
+      setErrorTitle('O título do Post deve ter ao menos 3 caracteres');
+      setHasErrors(true);
+    }
+
+    if (!newPost.isImage && newPost.description.length < 3) {
+      setErrorDescription('A descrição do Post deve ter ao menos 3 caracteres');
+      setHasErrors(true);
+    }
+
+    if (hasErrors) {
+      return;
+    }
 
     const postData = new FormData();
     postData.append('post', new Blob([JSON.stringify(newPost)], { type: 'application/json' }));
@@ -49,6 +66,8 @@ function CreatePostDialog({ postCreated }: CreatePostDialogProps) {
       await api.post('/post', postData, getAuthHeader());
       const { data } = await api.get('/post', getAuthHeader());
       postCreated(data[data.length - 1]);
+      setErrorTitle('');
+      setErrorDescription('');
       toast.success('Post criado com sucesso!');
     } catch (err) {
       toast.error('Ocorreu um erro ao criar um Post');
@@ -70,14 +89,24 @@ function CreatePostDialog({ postCreated }: CreatePostDialogProps) {
         <form className='flex flex-col gap-3 mt-4' onSubmit={handleSubmit}>
           <Text>Título do Post</Text>
           <TextInput.Root>
-            <TextInput.Input id='title' placeholder='Digite o título do Post' />
+            <TextInput.Input
+              id='title'
+              placeholder='Digite o título do Post'
+              onChange={() => setHasErrors(false)}
+            />
           </TextInput.Root>
+          {errorTitle && <Text className='text-red-600' size='sm'>{errorTitle}</Text>}
           {selectedFile ? null : (
             <>
               <Text>Conteúdo do Post</Text>
               <TextInput.Root>
-                <TextInput.Input id='description' placeholder='Digite a descrição do Post' />
+                <TextInput.Input
+                  id='description'
+                  placeholder='Digite a descrição do Post'
+                  onChange={() => setHasErrors(false)}
+                />
               </TextInput.Root>
+              {errorDescription && <Text className='text-red-600' size='sm'>{errorDescription}</Text>}
             </>
           )}
           <Dropzone onFileUploaded={setSelectedFile} />

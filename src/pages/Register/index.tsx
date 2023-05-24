@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User } from '@phosphor-icons/react';
 import { toast } from 'react-toastify';
@@ -8,9 +9,16 @@ import { TextInput } from '../../components/TextInput';
 import api from '../../services/api';
 
 function Register() {
+  const [errorUsername, setErrorUsername] = useState('');
+
   const navigate = useNavigate();
 
   async function handleRegister(auth: Auth) {
+    if (auth.name && auth.name.length < 3) {
+      setErrorUsername('O nome precisa ter ao menos 3 caracteres');
+      return;
+    }
+
     try {
       await api.post('/user', auth);
       toast.success('Conta criada com sucesso!');
@@ -39,6 +47,7 @@ function Register() {
           id='name'
         />
       </TextInput.Root>
+      {errorUsername && <Text className='text-red-600' size='sm'>{errorUsername}</Text>}
     </AuthForm>
   );
 }
